@@ -1,166 +1,62 @@
-import React from 'react';
-import { NavigationContainer, DefaultTheme } from '@react-navigation/native';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { SafeAreaProvider } from 'react-native-safe-area-context';
-import { Ionicons } from '@expo/vector-icons';
-import { Theme } from './theme/AppTheme';
-import { GameProvider } from './contexts/GameContext';
-
-import BreweryPage from './screens/BreweryPage';
-import ActivitiesPage from './screens/ActivitiesPage';
-import BassFishingGame from './screens/BassFishingGame';
-import HuntingGame from './screens/HuntingGame';
-import SwampCampingGame from './screens/SwampCampingGame';
-import StorePage from './screens/StorePage';
-import MoreScreen from './screens/MoreScreen';
-import ProfilePage from './screens/ProfilePage';
-import SocialPage from './screens/SocialPage';
-import AnalyticsDashboardPage from './screens/AnalyticsDashboardPage';
-import AdminPanelPage from './screens/AdminPanelPage';
-import CharactersPage from './screens/CharactersPage';
-
-const Tab = createBottomTabNavigator();
-const MoreStack = createNativeStackNavigator();
-const ActivitiesStack = createNativeStackNavigator();
-
-const navTheme = {
-  ...DefaultTheme,
-  colors: {
-    ...DefaultTheme.colors,
-    background: Theme.colors.background,
-    card: Theme.colors.surface,
-    text: Theme.colors.text,
-    border: Theme.colors.border,
-    primary: Theme.colors.selection.active,
-    notification: Theme.colors.secondary,
-  },
-};
-
-const stackScreenOptions = {
-  headerStyle: { backgroundColor: Theme.colors.surface },
-  headerTintColor: Theme.colors.text,
-  headerTitleStyle: {
-    fontWeight: Theme.typography.fontWeight.bold,
-    color: Theme.colors.text,
-  },
-  headerBackTitle: 'Back',
-  animation: 'slide_from_right' as const,
-  contentStyle: { backgroundColor: Theme.colors.background },
-};
-
-function ActivitiesStackNavigator() {
-  return (
-    <ActivitiesStack.Navigator screenOptions={stackScreenOptions}>
-      <ActivitiesStack.Screen
-        name="ActivitiesHome"
-        component={ActivitiesPage}
-        options={{ headerShown: false }}
-      />
-      <ActivitiesStack.Screen
-        name="BassFishing"
-        component={BassFishingGame}
-        options={{ headerShown: false }}
-      />
-      <ActivitiesStack.Screen
-        name="Hunting"
-        component={HuntingGame}
-        options={{ headerShown: false }}
-      />
-      <ActivitiesStack.Screen
-        name="SwampCamping"
-        component={SwampCampingGame}
-        options={{ headerShown: false }}
-      />
-    </ActivitiesStack.Navigator>
-  );
-}
-
-function MoreStackNavigator() {
-  return (
-    <MoreStack.Navigator screenOptions={stackScreenOptions}>
-      <MoreStack.Screen
-        name="MoreHome"
-        component={MoreScreen}
-        options={{ headerShown: false }}
-      />
-      <MoreStack.Screen
-        name="Profile"
-        component={ProfilePage}
-        options={{ title: 'MOONSHINE TURF', headerShown: false }}
-      />
-      <MoreStack.Screen
-        name="Social"
-        component={SocialPage}
-        options={{ title: 'Social Sharing', headerShown: false }}
-      />
-      <MoreStack.Screen
-        name="Analytics"
-        component={AnalyticsDashboardPage}
-        options={{ title: 'Analytics', headerShown: false }}
-      />
-      <MoreStack.Screen
-        name="Admin"
-        component={AdminPanelPage}
-        options={{ title: 'Admin Panel', headerShown: false }}
-      />
-      <MoreStack.Screen
-        name="Characters"
-        component={CharactersPage}
-        options={{ title: 'The Park Folk', headerShown: false }}
-      />
-    </MoreStack.Navigator>
-  );
-}
+import React, { useEffect, useState } from 'react';
+import { SafeAreaView, StyleSheet, View, Text, Button, FlatList } from 'react-native';
+import { HillbillyCharactersView } from './components/HillbillyCharacters';
+import { fetchBatches, createBatch, MoonshineBatch } from './components/MoonshineBackend';
 
 export default function App() {
+  const [batches, setBatches] = useState<MoonshineBatch[]>([]);
+
+  useEffect(() => {
+    loadBatches();
+  }, []);
+
+  const loadBatches = async () => {
+    const data = await fetchBatches();
+    setBatches(data);
+  };
+
+  const handleAddBatch = async () => {
+    await createBatch({
+      batch_name: 'Mountain Lightning ' + Math.floor(Math.random() * 100),
+      proof: 150,
+      distiller: 'Granny Mae',
+      status: 'Fermenting',
+    });
+    loadBatches();
+  };
+
   return (
-    <SafeAreaProvider>
-      <GameProvider>
-        <NavigationContainer theme={navTheme}>
-          <Tab.Navigator
-            screenOptions={({ route }) => ({
-              headerShown: false,
-              tabBarStyle: {
-                backgroundColor: Theme.colors.surface,
-                borderTopColor: Theme.colors.border,
-                borderTopWidth: 1,
-                paddingBottom: 4,
-                paddingTop: 4,
-                height: 60,
-              },
-              tabBarActiveTintColor: Theme.colors.selection.active,
-              tabBarInactiveTintColor: Theme.colors.selection.inactive,
-              tabBarLabelStyle: {
-                fontSize: Theme.typography.fontSize.xs,
-                fontWeight: Theme.typography.fontWeight.semibold,
-                marginBottom: 2,
-              },
-              tabBarIcon: ({ focused, color, size }) => {
-                const icons: Record<string, [string, string]> = {
-                  Brewery: ['flask', 'flask-outline'],
-                  Activities: ['fish', 'fish-outline'],
-                  Store: ['cash', 'cash-outline'],
-                  More: ['menu', 'menu-outline'],
-                };
-                const [activeIcon, inactiveIcon] = icons[route.name] ?? ['ellipse', 'ellipse-outline'];
-                return (
-                  <Ionicons
-                    name={(focused ? activeIcon : inactiveIcon) as any}
-                    size={size}
-                    color={color}
-                  />
-                );
-              },
-            })}
-          >
-            <Tab.Screen name="Brewery" component={BreweryPage} />
-            <Tab.Screen name="Activities" component={ActivitiesStackNavigator} />
-            <Tab.Screen name="Store" component={StorePage} />
-            <Tab.Screen name="More" component={MoreStackNavigator} />
-          </Tab.Navigator>
-        </NavigationContainer>
-      </GameProvider>
-    </SafeAreaProvider>
+    <SafeAreaView style={styles.container}>
+      <View style={styles.header}>
+        <Text style={styles.title}>Moonshine $ Dashboard</Text>
+        <Button title="Brew New Batch" color="#ffcc00" onPress={handleAddBatch} />
+      </View>
+      <View style={styles.batchSection}>
+        <Text style={styles.sectionTitle}>Active Batches ({batches.length})</Text>
+        <FlatList
+          data={batches}
+          keyExtractor={(item, index) => item.id || index.toString()}
+          renderItem={({ item }) => (
+            <View style={styles.batchCard}>
+              <Text style={styles.batchText}>{item.batch_name} - {item.proof} Proof ({item.status})</Text>
+            </View>
+          )}
+        />
+      </View>
+      <View style={styles.characterSection}>
+        <HillbillyCharactersView />
+      </View>
+    </SafeAreaView>
   );
 }
+
+const styles = StyleSheet.create({
+  container: { flex: 1, backgroundColor: '#0a0a0a' },
+  header: { padding: 16, alignItems: 'center', borderBottomWidth: 1, borderBottomColor: '#222' },
+  title: { fontSize: 26, fontWeight: 'bold', color: '#ffcc00', marginBottom: 10 },
+  batchSection: { padding: 16, maxHeight: 200 },
+  sectionTitle: { fontSize: 18, fontWeight: 'bold', color: '#ffffff', marginBottom: 8 },
+  batchCard: { backgroundColor: '#1a1a1a', padding: 10, borderRadius: 6, marginBottom: 6, borderWidth: 1, borderColor: '#333' },
+  batchText: { color: '#cccccc', fontSize: 14 },
+  characterSection: { flex: 1 },
+});
