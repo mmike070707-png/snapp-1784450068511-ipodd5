@@ -1,0 +1,91 @@
+{
+  "app_name": "Moonshiner MONEY",
+  "navigation_type": "tabs",
+  "theme_colors": {
+    "primary": "#8B4513",
+    "secondary": "#DAA520"
+  },
+  "pages": [
+    {
+      "id": "brewery",
+      "component_name": "BreweryPage",
+      "title": "Brewery",
+      "description": "Main build game screen where users construct and upgrade their moonshine brewery and trailer using coins",
+      "type": "core"
+    },
+    {
+      "id": "activities",
+      "component_name": "ActivitiesPage",
+      "title": "Activities",
+      "description": "Three mini-games with PLAY NOW buttons and 15-minute cooldowns. All navigate to full game screens: Bass Fishin', Varmint Huntin', Swamp Campin'.",
+      "type": "core"
+    },
+    {
+      "id": "bass-fishing-game",
+      "component_name": "BassFishingGame",
+      "title": "Bass Fishin' Game",
+      "description": "Interactive bass fishing mini-game with SVG gradient sky, tree silhouettes, fish shadows in water, lily pads, seaweed. Cast power meter, bobber bite detection, reaction timing hookset, rapid-tap reel-in. 5 fish types (Bluegill→Trophy Bass) with rarity tiers and coin rewards.",
+      "type": "core"
+    },
+    {
+      "id": "hunting-game",
+      "component_name": "HuntingGame",
+      "title": "Varmint Huntin' Game",
+      "description": "Interactive hunting mini-game: stalk through dense woods with birds/fog/undergrowth, sight animal, oscillating red crosshair scope, fire when centered, rapid-tap tracking. 5 prey types (Squirrel→8-Point Buck). 15-minute cooldown set after game outcome.",
+      "type": "core"
+    },
+    {
+      "id": "swamp-camping-game",
+      "component_name": "SwampCampingGame",
+      "title": "Swamp Campin' Game",
+      "description": "Interactive swamp camping mini-game: pitch tent, power-bar fire-starting, lure critters to the fire, grab them with rapid-tap before they escape. 5 critter types (Bullfrog→Gator). Dark bayou scene with moon, fireflies, gator eyes, cypress trees. 15-minute cooldown.",
+      "type": "core"
+    },
+    {
+      "id": "store",
+      "component_name": "StorePage",
+      "title": "Store",
+      "description": "In-app purchase screen with coin packages ($0.99–$10.00) wired to Stripe Payment Links. Tapping a package opens a Stripe-hosted checkout page. Requires STRIPE_PAYMENT_LINK in Settings → Environment.",
+      "type": "core"
+    },
+    {
+      "id": "profile",
+      "component_name": "ProfilePage",
+      "title": "Profile",
+      "description": "User authentication and profile management with progress tracking",
+      "type": "placeholder",
+      "suggested_prompt": "Add user authentication with email/password login, registration flow, and profile page showing user stats, achievements, and current brewery/trailer progress"
+    },
+    {
+      "id": "characters",
+      "component_name": "CharactersPage",
+      "title": "The Park Folk",
+      "description": "12 unique comical trailer park characters with names, titles, quotes, bios, and personality traits. Tap to expand each character card.",
+      "type": "core"
+    },
+    {
+      "id": "social",
+      "component_name": "SocialPage",
+      "title": "Social Sharing",
+      "description": "Share achievements and brewery progress with friends",
+      "type": "placeholder",
+      "suggested_prompt": "Add social sharing functionality allowing users to share their brewery builds, achievements, and progress screenshots to Facebook, Instagram, and Twitter"
+    },
+    {
+      "id": "analytics",
+      "component_name": "AnalyticsDashboardPage",
+      "title": "Analytics Dashboard",
+      "description": "User engagement and gameplay statistics tracking",
+      "type": "placeholder",
+      "suggested_prompt": "Add analytics dashboard showing user engagement metrics, coin economy stats, popular activities, retention rates, and purchase conversion data"
+    },
+    {
+      "id": "admin",
+      "component_name": "AdminPanelPage",
+      "title": "Admin Panel",
+      "description": "Backend management for content, users, and monetization",
+      "type": "placeholder",
+      "suggested_prompt": "Add admin panel with user management, content moderation, coin economy balancing tools, purchase history, and ability to adjust pricing and rewards"
+    }
+  ]
+}
