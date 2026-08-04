@@ -12,6 +12,7 @@ const SocialPage: React.FC<SocialPageProps> = ({ navigation }) => {
       pageName="social"
       description="Share achievements and brewery progress with friends"
       suggestedPrompt="Add social sharing functionality allowing users to share their brewery builds, achievements, and progress screenshots to Facebook, Instagram, and Twitter"
+      navigation={navigation}
     />
   );
 };
