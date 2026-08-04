@@ -12,6 +12,7 @@ const AdminPanelPage: React.FC<AdminPanelPageProps> = ({ navigation }) => {
       pageName="admin"
       description="Backend management for content, users, and monetization"
       suggestedPrompt="Add admin panel with user management, content moderation, coin economy balancing tools, purchase history, and ability to adjust pricing and rewards"
+      navigation={navigation}
     />
   );
 };
