@@ -12,6 +12,7 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ navigation }) => {
       pageName="profile"
       description="User authentication and profile management with progress tracking"
       suggestedPrompt="Add user authentication with email/password login, registration flow, and profile page showing user stats, achievements, and current brewery/trailer progress"
+      navigation={navigation}
     />
   );
 };
