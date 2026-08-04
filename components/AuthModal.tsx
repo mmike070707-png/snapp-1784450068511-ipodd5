@@ -32,12 +32,32 @@ const AuthModal: React.FC<AuthModalProps> = ({ visible, onClose }) => {
   const handleSubmit = async () => {
     setError('');
     setSuccess('');
+
+    // Validate inputs
+    if (!email.trim()) {
+      setError('Please enter your email');
+      return;
+    }
+    if (!password.trim()) {
+      setError('Please enter a password');
+      return;
+    }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      setError('Please enter a valid email address');
+      return;
+    }
+    if (password.length < 6) {
+      setError('Password must be at least 6 characters');
+      return;
+    }
+
     setLoading(true);
     try {
       if (isLogin) {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
-        onClose();
+        setSuccess('Signed in successfully!');
+        setTimeout(onClose, 500);
       } else {
         const { error } = await supabase.auth.signUp({ email, password });
         if (error) throw error;
@@ -71,6 +91,7 @@ const AuthModal: React.FC<AuthModalProps> = ({ visible, onClose }) => {
             autoCapitalize="none"
             autoCorrect={false}
             keyboardType="email-address"
+            editable={!loading}
           />
           <TextInput
             style={styles.input}
@@ -79,13 +100,14 @@ const AuthModal: React.FC<AuthModalProps> = ({ visible, onClose }) => {
             value={password}
             onChangeText={setPassword}
             secureTextEntry
+            editable={!loading}
           />
 
           {!!error && <Text style={styles.error}>{error}</Text>}
           {!!success && <Text style={styles.success}>{success}</Text>}
 
           <TouchableOpacity
-            style={styles.button}
+            style={[styles.button, loading && styles.buttonDisabled]}
             onPress={handleSubmit}
             disabled={loading}
             activeOpacity={0.8}
@@ -103,6 +125,7 @@ const AuthModal: React.FC<AuthModalProps> = ({ visible, onClose }) => {
               setError('');
               setSuccess('');
             }}
+            disabled={loading}
           >
             <Text style={styles.toggle}>
               {isLogin
@@ -111,7 +134,7 @@ const AuthModal: React.FC<AuthModalProps> = ({ visible, onClose }) => {
             </Text>
           </TouchableOpacity>
 
-          <TouchableOpacity onPress={onClose}>
+          <TouchableOpacity onPress={onClose} disabled={loading}>
             <Text style={styles.close}>Cancel</Text>
           </TouchableOpacity>
         </View>
@@ -161,6 +184,9 @@ const styles = StyleSheet.create({
     paddingVertical: 14,
     alignItems: 'center',
     marginTop: 4,
+  },
+  buttonDisabled: {
+    opacity: 0.6,
   },
   buttonText: { color: '#ffffff', fontSize: 15, fontWeight: '600' },
   toggle: { color: '#6b7280', fontSize: 13, textAlign: 'center', marginTop: 16 },
