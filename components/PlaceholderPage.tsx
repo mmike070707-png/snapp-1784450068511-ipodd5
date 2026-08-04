@@ -40,26 +40,45 @@ File to modify: ${fileName}
 Current state: This file is using PlaceholderPage component and needs full implementation.
 Action required: Replace the PlaceholderPage import and component with complete ${pageTitle} functionality.`;
 
-    // Send message to parent Snapp app (iOS WebView or web builder)
-    if (window?.__SNAPP_BRIDGE?.postMessage) {
-      // Use Snapp bridge (injected by fullscreen preview page)
-      window.__SNAPP_BRIDGE.postMessage({
-        type: 'OPEN_CHAT_WITH_MESSAGE',
-        message: message
-      });
-    } else if (window?.ReactNativeWebView) {
-      // Fallback: Mobile - Send via React Native WebView (Android)
-      window.ReactNativeWebView.postMessage(JSON.stringify({
-        type: 'OPEN_CHAT_WITH_MESSAGE',
-        message: message
-      }));
-    } else if (window.parent !== window) {
-      // Fallback: Web - Send via iframe postMessage to parent
-      window.parent.postMessage({
-        type: 'OPEN_CHAT_WITH_MESSAGE',
-        message: message
-      }, '*');
-    } 
+    // Log for debugging
+    console.log('Opening chat with message:', message);
+
+    // Try multiple methods to communicate with parent
+    try {
+      // Method 1: Use Snapp bridge (injected by fullscreen preview page)
+      if (window?.__SNAPP_BRIDGE?.postMessage) {
+        window.__SNAPP_BRIDGE.postMessage({
+          type: 'OPEN_CHAT_WITH_MESSAGE',
+          message: message
+        });
+        return;
+      }
+
+      // Method 2: Mobile - Send via React Native WebView (Android)
+      if (window?.ReactNativeWebView) {
+        window.ReactNativeWebView.postMessage(JSON.stringify({
+          type: 'OPEN_CHAT_WITH_MESSAGE',
+          message: message
+        }));
+        return;
+      }
+
+      // Method 3: Web - Send via iframe postMessage to parent
+      if (window.parent !== window) {
+        window.parent.postMessage({
+          type: 'OPEN_CHAT_WITH_MESSAGE',
+          message: message
+        }, '*');
+        return;
+      }
+
+      // Method 4: Fallback - Try to alert user with message to copy
+      console.warn('No bridge found. Showing message to user.');
+      alert(`Please ask your AI assistant:\n\n${message}`);
+    } catch (error) {
+      console.error('Error posting message:', error);
+      alert(`To add ${pageTitle}, ask your AI assistant:\n\n${message}`);
+    }
   };
 
   return (
