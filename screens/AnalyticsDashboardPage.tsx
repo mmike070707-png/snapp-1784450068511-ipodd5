@@ -12,6 +12,7 @@ const AnalyticsDashboardPage: React.FC<AnalyticsDashboardPageProps> = ({ navigat
       pageName="analytics"
       description="User engagement and gameplay statistics tracking"
       suggestedPrompt="Add analytics dashboard showing user engagement metrics, coin economy stats, popular activities, retention rates, and purchase conversion data"
+      navigation={navigation}
     />
   );
 };
