@@ -3,81 +3,25 @@ import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { AppTheme } from '../theme/AppTheme';
 
-// Type declaration for window with Snapp bridge
-declare global {
-  interface Window {
-    __SNAPP_BRIDGE?: {
-      postMessage: (message: any) => void;
-    };
-    ReactNativeWebView?: {
-      postMessage: (message: string) => void;
-    };
-  }
-}
-
 interface PlaceholderPageProps {
   pageTitle: string;
   pageName: string;
   description?: string;
   suggestedPrompt?: string;
+  navigation?: any;
 }
 
 const PlaceholderPage: React.FC<PlaceholderPageProps> = ({
   pageTitle,
   pageName,
   description,
-  suggestedPrompt
+  suggestedPrompt,
+  navigation
 }) => {
   const handleCreatePage = () => {
-    // Create detailed prompt with file context for AI
-    const basePrompt = suggestedPrompt || `Add ${pageTitle} page to the app`;
-    const capitalizedPageName = pageName.charAt(0).toUpperCase() + pageName.slice(1);
-    const fileName = `screens/${capitalizedPageName}Page.tsx`;
-
-    const message = `${basePrompt}
-
-File to modify: ${fileName}
-Current state: This file is using PlaceholderPage component and needs full implementation.
-Action required: Replace the PlaceholderPage import and component with complete ${pageTitle} functionality.`;
-
-    // Log for debugging
-    console.log('Opening chat with message:', message);
-
-    // Try multiple methods to communicate with parent
-    try {
-      // Method 1: Use Snapp bridge (injected by fullscreen preview page)
-      if (window?.__SNAPP_BRIDGE?.postMessage) {
-        window.__SNAPP_BRIDGE.postMessage({
-          type: 'OPEN_CHAT_WITH_MESSAGE',
-          message: message
-        });
-        return;
-      }
-
-      // Method 2: Mobile - Send via React Native WebView (Android)
-      if (window?.ReactNativeWebView) {
-        window.ReactNativeWebView.postMessage(JSON.stringify({
-          type: 'OPEN_CHAT_WITH_MESSAGE',
-          message: message
-        }));
-        return;
-      }
-
-      // Method 3: Web - Send via iframe postMessage to parent
-      if (window.parent !== window) {
-        window.parent.postMessage({
-          type: 'OPEN_CHAT_WITH_MESSAGE',
-          message: message
-        }, '*');
-        return;
-      }
-
-      // Method 4: Fallback - Try to alert user with message to copy
-      console.warn('No bridge found. Showing message to user.');
-      alert(`Please ask your AI assistant:\n\n${message}`);
-    } catch (error) {
-      console.error('Error posting message:', error);
-      alert(`To add ${pageTitle}, ask your AI assistant:\n\n${message}`);
+    // In production app, just go back instead of trying to open chat
+    if (navigation?.goBack) {
+      navigation.goBack();
     }
   };
 
@@ -113,27 +57,27 @@ Action required: Replace the PlaceholderPage import and component with complete 
           />
           <View style={styles.suggestionContent}>
             <Text style={styles.suggestionTitle}>
-              Want to add this page?
+              Coming Soon
             </Text>
             <Text style={styles.suggestionText}>
-              {suggestedPrompt || `Chat: "Add ${pageName} page"`}
+              This feature is being developed and will be available soon!
             </Text>
           </View>
         </View>
 
-        {/* Create Button */}
+        {/* Back Button */}
         <TouchableOpacity
           style={styles.createButton}
           onPress={handleCreatePage}
           activeOpacity={0.8}
         >
           <Ionicons
-            name="chatbubbles"
+            name="arrow-back"
             size={20}
             color="#FFFFFF"
             style={styles.buttonIcon}
           />
-          <Text style={styles.buttonText}>Create This Page</Text>
+          <Text style={styles.buttonText}>Go Back</Text>
         </TouchableOpacity>
 
         {/* Features */}
@@ -144,7 +88,7 @@ Action required: Replace the PlaceholderPage import and component with complete 
               size={20}
               color={AppTheme.colors.success}
             />
-            <Text style={styles.featureText}>Planned in schema</Text>
+            <Text style={styles.featureText}>Planned</Text>
           </View>
           <View style={styles.featureItem}>
             <Ionicons
@@ -152,7 +96,7 @@ Action required: Replace the PlaceholderPage import and component with complete 
               size={20}
               color={AppTheme.colors.primary}
             />
-            <Text style={styles.featureText}>Quick to add via chat</Text>
+            <Text style={styles.featureText}>Coming Soon</Text>
           </View>
         </View>
       </View>
